@@ -28,7 +28,7 @@ def limpar_moeda(valor):
 # 3. INTERFACE VISUAL (Streamlit)
 st.set_page_config(page_title="Méliuz - AI Growth Analytics", page_icon="📊", layout="wide")
 
-st.title("📊 Méliuz — AI Growth Analytics")
+st.title("📊 AI Growth Analytics")
 st.write("Plataforma automatizada para análise profunda de Testes A/B e Otimização de Margem de Cashback.")
 st.markdown("---")
 
@@ -89,7 +89,7 @@ with col2:
                                     "Se o usuário fizer qualquer tipo de pergunta fora deste contexto analítico empresarial — incluindo, mas não se limitando a: "
                                     "previsão do tempo, condições climáticas, fofocas, receitas, códigos de outros sistemas ou conversas cotidianas —, você deve "
                                     "bloquear a resposta imediatamente. "
-                                    "Caso ocorra um desvio de escopo, responda de forma extremamente curta, formal e educada explicando que suas funções são "
+                                    "Caso ocorra um desvio de escopo, responda de forma extremamente curta, formal e educada no máximo em 200 caracteres, explicando que suas funções são "
                                     "restritas à auditoria e análise de dados de Growth da Méliuz."
                                 )
                             },
