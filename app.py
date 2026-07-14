@@ -3,19 +3,16 @@ import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 from groq import Groq
+import gspread
+from google.oauth2.service_account import Credentials
 
-# 1. CARREGAMENTO RESTRITO DE CONFIGURAÇÕES
-# Busca o arquivo .env local. Em produção (Streamlit Cloud), o st.secrets assume o papel.
 if os.path.exists(".env"):
     load_dotenv()
 
-# Captura a chave de forma segura sem expô-la no código fonte
 chave_api = os.getenv("GROQ_API_KEY")
 
-# Inicializa o cliente sênior da Groq
 client = Groq(api_key=chave_api)
 
-# 2. ENGENHARIA DE DADOS (Tratamento de strings financeiras)
 def limpar_moeda(valor):
     """Remove símbolos monetários e formatação brasileira para conversão em float."""
     if isinstance(valor, str):
@@ -25,14 +22,12 @@ def limpar_moeda(valor):
     except:
         return 0.0
 
-# 3. INTERFACE VISUAL (Streamlit)
 st.set_page_config(page_title="Méliuz - AI Growth Analytics", page_icon="📊", layout="wide")
 
 st.title("📊 AI Growth Analytics")
 st.write("Plataforma automatizada para análise profunda de Testes A/B e Otimização de Margem de Cashback.")
 st.markdown("---")
 
-# Divisão da tela em duas colunas para melhorar a experiência visual do avaliador
 col1, col2 = st.columns([1, 2])
 
 with col1:
@@ -52,7 +47,6 @@ with col2:
     st.subheader("📑 Relatório e Tomada de Decisão")
     
     if botao_executar:
-        # Validação básica de campos obrigatórios antes de gastar requisições na API
         if not arquivo_subido:
             st.warning("Por favor, faça o upload de um arquivo CSV válido antes de prosseguir.")
         elif not prompt_usuario.strip():
@@ -60,16 +54,13 @@ with col2:
         else:
             with st.spinner("Processando volumetria de dados e consultando modelos sêniores..."):
                 try:
-                    # Leitura do dataset fornecido pelo usuário
                     df = pd.read_csv(arquivo_subido)
                     
-                    # Padronização de colunas financeiras comuns que costumam vir mal formatadas
                     colunas_criticas = ['comissão', 'cashback', 'vendas totais', 'receita', 'faturamento']
                     for col in df.columns:
                         if col.lower() in colunas_criticas or any(c in col.lower() for c in colunas_criticas):
                             df[col] = df[col].apply(limpar_moeda)
                     
-                    # Agrupamento inteligente por variante caso a coluna padrão exista
                     coluna_grupo = 'Grupos de usuários'
                     if coluna_grupo in df.columns:
                         df_consolidado = df.groupby(coluna_grupo).sum(numeric_only=True)
@@ -77,7 +68,6 @@ with col2:
                     else:
                         dados_finais_texto = df.to_string()
                     
-                    # Construção do payload com as travas de escopo (Guardrails)
                     resposta_ia = client.chat.completions.create(
                         model="llama-3.3-70b-versatile",
                         messages=[
@@ -104,11 +94,30 @@ with col2:
                             }
                         ]
                     )
-                    
-                    # Apresentação do resultado final limpo e formatado
-                    st.success("Análise de Growth Concluída com Sucesso!")
-                    st.markdown(resposta_ia.choices[0].message.content)
-                    
+                    texto_limpo = resposta_ia.choices[0].message.content if resposta_ia.choices else ""
+                    st.success("Análise concluída com sucesso! Enviando para o banco de dados...")
+
+                    escopos = [
+                        "https://www.googleapis.com/auth/spreadsheets",
+                        "https://www.googleapis.com/auth/drive"
+                        ]
+
+                    credenciais_dict = dict(st.secrets["gcp_service_account"])
+                    credenciais = Credentials.from_service_account_info(credenciais_dict, scopes=escopos)
+                        
+                    cliente_google = gspread.authorize(credenciais)
+
+                    ID_DA_PLANILHA = "1ocVlzJ7Gyk3RxS7hSXLS7aERve95XdnpNS1wv_rZ5SI"
+                    planilha = cliente_google.open_by_key(ID_DA_PLANILHA).sheet1
+
+                    nova_linha = [
+                        arquivo_subido.name,
+                        "Auditoria automatizada de margem e conversão do teste A/B",
+                        texto_limpo,
+                    ]
+                    planilha.append_row(nova_linha)
+
+                    st.success("✅ Teste registrado com sucesso na planilha oficial!") 
                 except Exception as e:
                     st.error(f"Falha crítica na execução ou na comunicação com a API: {e}")
     else:
