@@ -2,6 +2,8 @@
 
 **Teste Técnico: Estágio de Growth AI-Native**
 
+![Demonstração do Sistema](assets/demo.gif)
+
 Olá! Este é o repositório da minha solução para o desafio de automação de análises de testes A/B de cashback. 
 
 O objetivo deste projeto é eliminar o trabalho manual e repetitivo da equipe de Growth, processando os datasets dos testes e decidindo, de forma rápida e embasada em dados reais (ROI e Margem), qual variante deve ser escalada para 100% do tráfego.
