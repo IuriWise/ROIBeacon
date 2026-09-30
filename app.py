@@ -112,7 +112,7 @@ if result:
             st.write(result['ai'].replace('$', r'\$'))
     full_report = result['report']
     if result['narrative']:
-        full_report += '\n\n## Demonstração fictícia — interpretação pré-gerada\n' + result['narrative']
+        full_report += '\n\n## Demonstração fictícia: interpretação pré-gerada\n' + result['narrative']
     if result['ai']:
         full_report += '\n\n## Explicação complementar por IA\n' + result['ai']
     st.download_button('Baixar relatório (.md)', full_report, 'relatorio_roibeacon.md', 'text/markdown', key='download')

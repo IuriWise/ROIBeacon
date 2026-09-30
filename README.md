@@ -1,4 +1,4 @@
-# ROIBeacon — decisões de cashback com dados
+# ROIBeacon: decisões de cashback com dados
 
 **Estudo de caso de engenharia de dados, experimentação e IA aplicada a Growth.**
 
@@ -27,7 +27,7 @@ Abra `http://localhost:8501`, escolha um cenário e clique em **Experimentar com
 
 A interface identifica a **interpretação pré-gerada**. Os cartões e relatórios são calculados novamente a partir dos CSVs fictícios em `examples/`. O relatório pode ser baixado em Markdown. O simulador permite variar comissão e cashback sem assumir que incentivos aumentam conversão.
 
-[Assistir à demonstração completa — vídeo curto](assets/decisao_cashback.mp4)
+[Assistir à demonstração completa (vídeo curto)](assets/decisao_cashback.mp4)
 
 ![Resultado da promoção: mais vendas e menor resultado líquido](assets/resultado_promocao.png)
 
