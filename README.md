@@ -4,11 +4,17 @@
 
 O ROIBeacon compara variantes de cashback e mostra quando os dados ainda não sustentam uma decisão. Os números são calculados em Python; a IA é uma camada opcional de interpretação.
 
+**[Acessar o aplicativo e experimentar](https://roibeacon.streamlit.app/)**
+
+Escolha um cenário e clique em **Experimentar com dados de exemplo** para explorar a demonstração sem configurar credenciais.
+
 ## Problema
 
 Uma promoção pode aumentar vendas e, ao mesmo tempo, reduzir o resultado financeiro. Comparar apenas faturamento ou delegar cálculos a um modelo de linguagem pode esconder esse efeito. O projeto reúne métricas explícitas, validação dos dados e limitações estatísticas em uma interface para apoiar a análise.
 
 ## Demonstração sem credenciais
+
+Teste diretamente no [aplicativo publicado](https://roibeacon.streamlit.app/) ou execute localmente:
 
 ```bash
 python -m venv venv
