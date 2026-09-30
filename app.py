@@ -9,10 +9,6 @@ from google.oauth2.service_account import Credentials
 if os.path.exists(".env"):
     load_dotenv()
 
-chave_api = os.getenv("GROQ_API_KEY")
-
-client = Groq(api_key=chave_api)
-
 def limpar_moeda(valor):
     """Remove símbolos monetários e formatação brasileira para conversão em float."""
     if isinstance(valor, str):
@@ -22,7 +18,20 @@ def limpar_moeda(valor):
     except:
         return 0.0
 
-st.set_page_config(page_title="Méliuz - AI Growth Analytics", page_icon="📊", layout="wide")
+st.set_page_config(page_title="ROIBeacon - AI Growth Analytics", page_icon="📊", layout="wide")
+
+chave_api = os.getenv("GROQ_API_KEY")
+if not chave_api:
+    try:
+        chave_api = st.secrets.get("GROQ_API_KEY")
+    except FileNotFoundError:
+        chave_api = None
+
+if not chave_api:
+    st.error("Configure GROQ_API_KEY no arquivo .env ou nos Secrets do Streamlit para iniciar a aplicação.")
+    st.stop()
+
+client = Groq(api_key=chave_api)
 
 st.title("📊 AI Growth Analytics")
 st.write("Plataforma automatizada para análise profunda de Testes A/B e Otimização de Margem de Cashback.")
@@ -69,18 +78,18 @@ with col2:
                         dados_finais_texto = df.to_string()
                     
                     resposta_ia = client.chat.completions.create(
-                        model="llama-3.3-70b-versatile",
+                        model="openai/gpt-oss-120b",
                         messages=[
                             {
                                 "role": "system",
                                 "content": (
-                                    "Você é um Analista de Growth Sênior da Méliuz, especialista em testes A/B e economia de plataformas de cashback. "
+                                    "Você é um Analista de Growth Sênior, especialista em testes A/B e economia de plataformas de cashback. "
                                     "Seu escopo de atuação é EXCLUSIVAMENTE os dados numéricos e textuais contidos no arquivo fornecido pelo usuário. "
                                     "Se o usuário fizer qualquer tipo de pergunta fora deste contexto analítico empresarial — incluindo, mas não se limitando a: "
                                     "previsão do tempo, condições climáticas, fofocas, receitas, códigos de outros sistemas ou conversas cotidianas —, você deve "
                                     "bloquear a resposta imediatamente. "
                                     "Caso ocorra um desvio de escopo, responda de forma extremamente curta, formal e educada no máximo em 200 caracteres, explicando que suas funções são "
-                                    "restritas à auditoria e análise de dados de Growth da Méliuz."
+                                    "restritas à auditoria e análise de dados de Growth e cashback."
                                 )
                             },
                             {
@@ -98,8 +107,7 @@ with col2:
                     st.success("Análise concluída com sucesso! Enviando para o banco de dados...")
 
                     escopos = [
-                        "https://www.googleapis.com/auth/spreadsheets",
-                        "https://www.googleapis.com/auth/drive"
+                        "https://www.googleapis.com/auth/spreadsheets"
                         ]
 
                     credenciais_dict = dict(st.secrets["gcp_service_account"])
@@ -107,18 +115,21 @@ with col2:
                         
                     cliente_google = gspread.authorize(credenciais)
 
-                    ID_DA_PLANILHA = "1ocVlzJ7Gyk3RxS7hSXLS7aERve95XdnpNS1wv_rZ5SI"
-                    planilha = cliente_google.open_by_key(ID_DA_PLANILHA).sheet1
+                    id_da_planilha = os.getenv("GOOGLE_SHEETS_ID") or st.secrets.get("GOOGLE_SHEETS_ID")
+                    if not id_da_planilha:
+                        st.error("Configure GOOGLE_SHEETS_ID no arquivo .env ou nos Secrets do Streamlit.")
+                        st.stop()
+                    planilha = cliente_google.open_by_key(id_da_planilha).sheet1
 
                     nova_linha = [
                         arquivo_subido.name,
                         "Auditoria automatizada de margem e conversão do teste A/B",
                         texto_limpo,
                     ]
-                    planilha.append_row(nova_linha)
+                    planilha.append_row(nova_linha, value_input_option="RAW")
 
                     st.success("✅ Teste registrado com sucesso na planilha oficial!") 
-                except Exception as e:
-                    st.error(f"Falha crítica na execução ou na comunicação com a API: {e}")
+                except Exception:
+                    st.error("Não foi possível concluir a análise ou salvar o relatório. Verifique o CSV, as credenciais, os limites da API e o acesso à planilha.")
     else:
         st.info("Aguardando o upload dos dados e o acionamento do botão para gerar a análise.")

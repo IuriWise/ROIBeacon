@@ -28,4 +28,4 @@ O objetivo deste relatório é analisar os resultados do teste A/B realizado com
 Com base nos resultados, o Grupo 1 apresenta a maior Margem de Comissão Líquida (6,8%) e o maior Retorno sobre o Investimento (175,1%). Isso indica que a variante de cashback utilizada no Grupo 1 é a mais eficaz em termos de rentabilidade.
 
 **Recomendação:**
-Considerando os resultados do teste A/B, recomenda-se escalar a variante de cashback do **Grupo 1** para 100% do tráfego. Essa decisão se baseia nos dados financeiros reais e visa maximizar a rentabilidade e o retorno sobre o investimento da Méliuz.
+Considerando os resultados do teste A/B, recomenda-se escalar a variante de cashback do **Grupo 1** para 100% do tráfego. Essa decisão se baseia nos dados financeiros reais e visa maximizar a rentabilidade e o retorno sobre o investimento da plataforma de cashback.
